@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { WalletConnectTariSigner } from "@tari-project/wallet-connect-signer";
-import { Amount, TransactionBuilder, buildTransactionRequest, Network, submitAndWaitForTransaction } from "@tari-project/tarijs";
+import { Amount, TransactionBuilder, buildTransactionRequest, Network, submitAndWaitForTransaction, } from "@tari-project/tarijs";
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
@@ -11,16 +11,21 @@ function App() {
   const [accountAddress, setAccountAddress] = useState<string | null>(null); // Store the account address
   const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state
   const [txResult, setTxResult] = useState<any>(null); // Store transaction result
-
+  const [showFullJson, setShowFullJson] = useState(false); // Toggle for showing full JSON
+  const [signer, setSigner] = useState<any>(null); // 
+  const [substates, setSubstates] = useState<any[]>([]); // Store the list of substates
+  const [showSubstates, setShowSubstates] = useState(false); // Toggle for showing substates
+  
   const projectId = "1825b9dd9c17b5a33063ae91cbc48a6e";
-  const signer = new WalletConnectTariSigner(projectId);
-
+  
   const connectToWallet = async () => {
     try {
       // Try connecting to the wallet
+      const signer = new WalletConnectTariSigner(projectId);
+      setSigner(signer);
+      // Try connecting to the wallet
       await signer.connect();
       setIsConnected(true);
-      
       // Fetch account address after successful connection
       const account = await signer.getAccount();
       setAccountAddress(account.address);
@@ -80,7 +85,7 @@ function App() {
       console.log("8")
       // Build the transaction request
       const isDryRun = false;  // Set to false to execute the transaction
-      const network = Network.LocalNet;  // Network to execute the transaction on
+      const network = Network.Igor;  // Network to execute the transaction on
       const requiredSubstates = [];  // No specific substates required
       console.log("9")
 
@@ -94,7 +99,7 @@ function App() {
       );
       console.log("10")
       // Submit the transaction and wait for the result
-      const txResult = await submitAndWaitForTransaction(provider, submitTransactionRequest);
+      const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
       setTxResult(txResult);  // Save the transaction result
       setIsSubmitting(false); // Reset the submitting state
 
@@ -104,6 +109,24 @@ function App() {
       setIsSubmitting(false);
     }
   };
+
+  const listSubstates = async () => {
+    if (!signer) {
+      setErrorMessage("Signer is not available. Please connect to the wallet first.");
+      return;
+    }
+
+    try {
+      const templateAddress = "2a0399ad3d53490d4fd4984e89d0d6fcad392c4da795117e1a2c01ffe724574d"; // Template address
+      const response = await signer.listSubstates(templateAddress, null, 10, 0); // Fetch substates
+      setSubstates(response.substates || []); // Save the substates
+      setShowSubstates(true); // Show the substates section
+    } catch (error) {
+      console.error("Error fetching substates:", error);
+      setErrorMessage("Failed to fetch substates.");
+    }
+  };
+
 
   return (
     <>
@@ -140,14 +163,48 @@ function App() {
 
         {/* Transaction Submit Button */}
         <button onClick={createAndSubmitTransaction} disabled={isSubmitting} className="submit-button">
-          {isSubmitting ? "Submitting..." : "Create and Submit Transaction"}
+          {isSubmitting ? "Submitting Create Counter Request..." : "Create Counter"}
         </button>
 
-        {/* Display Transaction Result */}
-        {txResult && (
+        {/* List Substates Button */}
+        <button onClick={listSubstates} className="list-substates-button">
+          List Substates
+        </button>
+
+        {/* Display Substates */}
+        {showSubstates && (
+          <div>
+            <h3>Substates:</h3>
+            <ul>
+              {substates.map((substate, index) => (
+                <li key={index}>
+                  {JSON.stringify(substate, null, 2)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+
+ {/* Display Transaction Result */}
+ {txResult && (
           <div>
             <h3>Transaction Result:</h3>
-            <pre>{JSON.stringify(txResult, null, 2)}</pre>
+            <p>Counter Created</p>
+            <p>Component Address: {txResult.result?.component_address || "Unknown Address"}</p>
+            
+
+            {/* Toggle Button for Full JSON */}
+            <button onClick={() => setShowFullJson(!showFullJson)} className="toggle-json-button">
+              {showFullJson ? "Hide Full JSON" : "Show Full JSON"}
+            </button>
+
+            {/* Collapsible JSON Section */}
+            {showFullJson && (
+              <pre style={{ background: "#f4f4f4", padding: "10px", borderRadius: "5px" }}>
+                {JSON.stringify(txResult, null, 2)}
+              </pre>
+            )}
           </div>
         )}
       </div>
