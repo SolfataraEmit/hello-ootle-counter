@@ -15,6 +15,8 @@ function App() {
   const [signer, setSigner] = useState<any>(null); // 
   const [substates, setSubstates] = useState<any[]>([]); // Store the list of substates
   const [showSubstates, setShowSubstates] = useState(false); // Toggle for showing substates
+  const [substateAddress, setSubstateAddress] = useState<string>(""); // Store the entered substate address
+
   
   const projectId = "1825b9dd9c17b5a33063ae91cbc48a6e";
   
@@ -127,6 +129,55 @@ function App() {
     }
   };
 
+  const incrementCounterByAddress = async () => {
+    if (!signer || !substateAddress) {
+      setErrorMessage("Signer or substate address is not available. Please enter a valid substate address.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    console.log("1");
+    try {
+      let builder = new TransactionBuilder();
+      builder = builder.callMethod({
+        componentAddress: substateAddress,
+        methodName: "increase", // Call the increase method
+      });
+      console.log("2");
+      const transaction = builder.build();
+      console.log("3");
+      const isDryRun = false;
+      const network = Network.Igor;
+
+      const submitTransactionRequest = buildTransactionRequest(
+        transaction,
+        accountAddress!,
+        [],
+        undefined,
+        isDryRun,
+        network
+      );
+      console.log("4");
+      const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
+      console.log("Increment Transaction Result:", txResult);
+      console.log("5");
+      // Optionally, fetch the updated value of the counter
+      const valueResponse = await signer.callMethod({
+        componentAddress: substateAddress,
+        methodName: "value",
+      });
+      const updatedValue = valueResponse.result || 0;
+
+      console.log(`Updated Value for Counter (${substateAddress}):`, updatedValue);
+      setErrorMessage(`Counter incremented successfully. Updated value: ${updatedValue}`);
+    } catch (error) {
+      console.error("Error incrementing counter:", error);
+      setErrorMessage("Failed to increment counter.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
 
   return (
     <>
@@ -165,6 +216,26 @@ function App() {
         <button onClick={createAndSubmitTransaction} disabled={isSubmitting} className="submit-button">
           {isSubmitting ? "Submitting Create Counter Request..." : "Create Counter"}
         </button>
+
+{/* Input for Substate Address */}
+<div>
+          <h3>Increment Counter by Substate Address</h3>
+          <input
+            type="text"
+            placeholder="Enter Substate Address"
+            value={substateAddress}
+            onChange={(e) => setSubstateAddress(e.target.value)}
+            className="substate-input"
+          />
+          <button
+            onClick={incrementCounterByAddress}
+            disabled={isSubmitting || !substateAddress}
+            className="increment-button"
+          >
+            {isSubmitting ? "Incrementing..." : "Increment Counter"}
+          </button>
+        </div>
+
 
         {/* List Substates Button */}
         <button onClick={listSubstates} className="list-substates-button">
