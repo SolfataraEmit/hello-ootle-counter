@@ -92,7 +92,7 @@ function App() {
         isDryRun,
         network
       );
-      console.log("")
+      console.log("10")
       // Submit the transaction and wait for the result
       const txResult = await submitAndWaitForTransaction(provider, submitTransactionRequest);
       setTxResult(txResult);  // Save the transaction result
