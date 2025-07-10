@@ -43,7 +43,7 @@ function App() {
 
     try {
       // Create the fee amount (e.g., 2000 units)
-      const fee = new Amount(2000);
+      const fee = new Amount(200000);
 
       // Initialize the TransactionBuilder
       let builder = new TransactionBuilder();
@@ -55,7 +55,7 @@ function App() {
       builder = builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
 
       // Template address for creating a new component
-      const templateAddress = "resource_217d58767480fbaa48693e11de34baf7fd727e33ee7627f0c4e5b78def378e57"; 
+      const templateAddress = "b41e014f3e964ebde083b9319b893fd12b915dc4f3ecc013118d1480f4f99017"; 
 
       // Call the template function to create a new component
       builder = builder.callFunction(
@@ -139,14 +139,15 @@ function App() {
 
         {/* Transaction Submit Button */}
         <button onClick={createAndSubmitTransaction} disabled={isSubmitting} className="submit-button">
-          {isSubmitting ? "Submitting..." : "Create and Submit Transaction"}
+          {isSubmitting ? "Submitting..." : "Create Counter"}
         </button>
 
         {/* Display Transaction Result */}
         {txResult && (
           <div>
             <h3>Transaction Result:</h3>
-            <pre>{JSON.stringify(txResult, null, 2)}</pre>
+            <p>Counter Created</p>
+            <p>Component Address: {txResult.result?.component_address || "Unknown Address"}</p>
           </div>
         )}
       </div>

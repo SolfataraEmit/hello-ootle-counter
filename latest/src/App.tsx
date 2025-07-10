@@ -51,19 +51,19 @@ function App() {
     try {
       // Create the fee amount (e.g., 2000 units)
       const fee = new Amount(20000);
-      console.log("1")
+
       // Initialize the TransactionBuilder
       let builder = new TransactionBuilder();
-      console.log("2")
+
       // Get the account executing the transaction
       const account = await signer.getAccount();
-      console.log("3")
+
       // Specify that the fee will be paid from the account
       builder = builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
-      console.log("4")
+
       // Template address for creating a new component
       const templateAddress = "2a0399ad3d53490d4fd4984e89d0d6fcad392c4da795117e1a2c01ffe724574d"; 
-      console.log("5")
+
       // Call the template function to create a new component
       builder = builder.callFunction(
         {
@@ -72,7 +72,7 @@ function App() {
         },
         []  // Parameters to pass to the function
       );
-      console.log("6")
+
       // Optionally, add a fee instruction (if needed)
       builder = builder.addFeeInstruction({
         CallMethod: {
@@ -81,15 +81,14 @@ function App() {
           args: [fee.getStringValue()],  // The fee amount
         },
       });
-      console.log("7")
+
       // Build the transaction
       const transaction = builder.build();
-      console.log("8")
+
       // Build the transaction request
       const isDryRun = false;  // Set to false to execute the transaction
       const network = Network.Igor;  // Network to execute the transaction on
       const requiredSubstates = [];  // No specific substates required
-      console.log("9")
 
       const submitTransactionRequest = buildTransactionRequest(
         transaction,
@@ -99,9 +98,14 @@ function App() {
         isDryRun,
         network
       );
-      console.log("10")
+
       // Submit the transaction and wait for the result
       const txResult = await submitAndWaitForTransaction(signer, submitTransactionRequest);
+
+      const response = result.result as { execution_results: { indexed: { value: string}}[]};
+      const componentAddress = parseCbor(response.execution_results[0].indexed.value);
+      console.log({componentAddress});
+
       setTxResult(txResult);  // Save the transaction result
       setIsSubmitting(false); // Reset the submitting state
 
