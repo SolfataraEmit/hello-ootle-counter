@@ -10,13 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tari-project/tari-permissions": "^0.4.0",
-    "@tari-project/tari-universe-signer": "^0.5.0",
-    "@tari-project/tarijs": "^0.4.0",
-    "@tari-project/typescript-bindings": "^1.5.2",
-    "@tari-project/wallet_jrpc_client": "^1.5.2",
-    "@tari-project/wallet-connect-signer": "^0.5.0",
-    "@tari-project/wallet-daemon-provider": "^0.4.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@tari-project/react-mui-connect-button": "^0.11.0",
+    "@tari-project/tarijs": "^0.11.0",
+    "@tari-project/tarijs-all": "^0.11.0",
+    "@tari-project/typescript-bindings": "^1.13.1",
+    "@tari-project/wallet_jrpc_client": "^1.7.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

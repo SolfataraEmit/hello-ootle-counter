@@ -19,7 +19,7 @@ function App() {
   const [substateAddress, setSubstateAddress] = useState<string>(""); // Store the entered substate address
 
   
-  const WC_PROJECT_ID =  "78f3485d08b9640a087cbcea000e1f8b";
+  const WC_PROJECT_ID =  "1825b9dd9c17b5a33063ae91cbc48a6e";
   
   const [signer, setSigner] = useState<TariSigner | null>(null);
   const [account, setAccount] = useState<AccountData | null>(null);

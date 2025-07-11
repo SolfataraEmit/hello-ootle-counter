@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { WalletConnectTariProvider } from "@tari-project/wallet-connect-provider";
-import { Amount, TransactionBuilder, buildTransactionRequest, Network, submitAndWaitForTransaction } from "@tari-project/tarijs";
+import {
+  Amount,
+  TransactionBuilder,
+  buildTransactionRequest,
+  Network,
+  submitAndWaitForTransaction,
+} from "@tari-project/tarijs-all";
+import type { AccountData, TariSigner } from "@tari-project/tarijs-all";
+
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
@@ -55,7 +63,7 @@ function App() {
       builder = builder.feeTransactionPayFromComponent(account.address, fee.getStringValue());
 
       // Template address for creating a new component
-      const templateAddress = "b41e014f3e964ebde083b9319b893fd12b915dc4f3ecc013118d1480f4f99017"; 
+      const templateAddress = "4e58528c0ab45e0201c617d6860752e23ca02c331235e8907a61c420b7e6465f"; 
 
       // Call the template function to create a new component
       builder = builder.callFunction(
